@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filling Station Monitoring</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Font Awesome CSS -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('file:///C:/Users/acer/Desktop/adms website/bgpic.jpg'); /* Background picture path */
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .button {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+            border: 2px solid white; /* White border */
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            font-size: 24px;
+            color: white;
+            background: linear-gradient(to right, #87CEEB, #0000FF); /* Gradient from light blue to dark blue */
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+        }
+
+        #stock {
+            background: linear-gradient(to right, #87CEEB, #0000FF); /* Gradient from light blue to dark blue */
+        }
+
+        #records {
+            background-color: #FF5722; /* Orange */
+        }
+
+        #billing {
+            background-color: #2196F3; /* Blue */
+        }
+
+        #add {
+            background-color: #FFC107; /* Yellow */
+        }
+
+        .button span {
+            font-weight: bold;
+        }
+
+        .navbar {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+            border-radius: 10px;
+        }
+
+        .navbar button {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            background-color: transparent;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar button:hover {
+            background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white background on hover */
+        }
+
+        .navbar button i {
+            font-size: 24px;
+            color: #333; /* Dark gray icon color */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="stock" class="button"><span>STOCK</span></button>
+        <button id="records" class="button"><span>RECORDS</span></button>
+        <button id="billing" class="button"><span>BILLING</span></button>
+        <button id="add" class="button"><span>ADD</span></button>
+    </div>
+    <div class="navbar">
+        <button><i class="fas fa-bell"></i></button> <!-- Button for notifications with bell icon -->
+        <button><i class="fas fa-question"></i></button> <!-- Button for questions with exclamation mark icon -->
+        <button><i class="fas fa-envelope"></i></button> <!-- Button for emails with envelope icon -->
+        <button><i class="fas fa-bars"></i></button> <!-- Button to expand the navigation bar -->
+    </div>
+</body>
+</html>
