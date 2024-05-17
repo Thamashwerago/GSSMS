@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url(bg.jpg);
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    .topbar {
+      display: flex;
+      width: 100%;
+      flex-direction: row;
+      margin: 10px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .button {
+      text-align: center;
+      margin: auto;
+      height: 50px;
+      width: 100px;
+      color: white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      font-weight: bold;
+      font-size: 24px;
+      border-radius: 10px;
+      border: 2px solid white;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .textbox {
+      margin: auto;
+      height: 50px;
+      width: 250px;
+      color: white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      font-weight: bold;
+      font-size: 24px;
+      border: 2px solid white;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .button:hover {
+      transform: scale(1.1);
+    }
+
+    .textbox:focus {
+      transform: scale(1.1);
+      outline: none;
+      backdrop-filter: blur(100px);
+    }
+
+    select {
+      outline: none;
+      min-height: 50px;
+      min-width: 250px;
+      color: white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      font-weight: bold;
+      font-size: 24px;
+      border-radius: 10px;
+      border: 2px solid white;
+      transition: transform 0.3s ease;
+    }
+
+    option {
+      color: black;
+    }
+
+    .search {
+      border-radius: 10px;
+      border: 2px solid white;
+      display: flex;
+      flex-direction: row;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    a {
+      right: 250px;
+      margin-left: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .table {
+      margin: 20px;
+      border-radius: 10px;
+      border: 2px solid white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      height: 80vh;
+      width: 95%;
+    }
+
+    table {
+      width: 100%;
+    }
+
+    th,
+    td {
+      border: 2px solid white;
+      color: white;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .checkbox {
+      height: 20px;
+      width: 20px;
+      accent-color: white;
+    }
+
+    .massage {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      position: absolute;
+      font-size: 24px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .popup {
+      display: none;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: auto;
+      width: auto;
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: transparent;
+      border: 2px solid white;
+      backdrop-filter: blur(100px);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .text {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <a href="dashboard.html">
+      <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#e8eaed">
+        <path
+          d="m480-320 56-56-64-64h168v-80H472l64-64-56-56-160 160 160 160Zm0 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+      </svg></a>
+    <div class="search">
+      <select id="filter" style="border-radius: 6px 0px 0px 6px;">
+        <option value="id">Product ID</option>
+        <option value="name" selected>Product Name</option>
+        <option value="category">Category</option>
+        <option value="brand">Brand</option>
+        <option value="partNo">Part No</option>
+        <option value="meNo">M.E. No</option>
+      </select>
+      <input type="text" id="search" class="textbox" onkeyup="search()" placeholder="Search"
+        style="border-radius: 0px 6px 6px 0px;">
+    </div>
+    <input type="button" class="button" value="Add" onclick="add()">
+    <input type="button" class="button" value="Delete" onclick="deletRecords()">
+    <input type="button" class="button" value="Edit" onclick="edit()">
+  </div>
+  <div class="table" id="table">
+    <table>
+      <tr>
+        <th>Product ID</th>
+        <th>Product Name</th>
+        <th>Category</th>
+        <th>Brand</th>
+        <th>Part No</th>
+        <th>M.E. No</th>
+        <th>Price</th>
+        <th>Quantity</th>
+      </tr>
+    </table>
+  </div>
+  <div class="popup" id="popup">
+    <table>
+      <tr>
+        <td style="border: none; width: 250px;"><label class="text">Product ID</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="id" style="margin: 10px;" readonly></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Product Name</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="name" style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Category</label></td>
+        <td style="border: none;">
+          <select id="category" style="margin: 10px;">
+            <option value="Oil Filter">Oil Filter</option>
+            <option value="Fuel Filter">Fuel Filter</option>
+            <option value="Air Filter">Air Filter</option>
+            <option value="Engine Oil">Engine Oil</option>
+            <option value="Gas Filter">Gas Filter</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Brand</label></td>
+        <td style="border: none;">
+          <select id="brand" style="margin: 10px;">
+            <option value="Sakura">Sakura</option>
+            <option value="Sure">Sure</option>
+            <option value="Caltex">Caltex</option>
+            <option value="VIC">VIC</option>
+            <option value="Toyota">Toyota</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Part No</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="partNo" style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">M.E. No</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="meNo" style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Price</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="price" style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Quantity</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="quantity" style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><input type="button" class="button" id="cancel" value="Cancel"></td>
+        <td style="border: none;"><input type="button" class="button" id="done" value="Done" style="margin: 10px;">
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="popup" id="popupConfirm" style="z-index: 2;">
+    <table>
+      <tr>
+        <td colspan="2" style="border: none;" id="confirmMessagetext"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><input type="button" class="button" id="confirmMessageCancel" value="NO"
+            style="margin-top: 10px;"></td>
+        <td style="border: none;"><input type="button" class="button" id="confirmMessageOk" value="YES"
+            style="margin-top: 10px;"></td>
+      </tr>
+    </table>
+  </div>
+  <div class="popup" id="popupMessage" style="z-index: 2;">
+    <label id="popupMessagetext" class="text"></label>
+    <input type="button" class="button" id="popupMessageOk" value="OK" style="margin-top: 10px;">
+  </div>
+  <script src="userVerification.js"></script>
+  <script>
+    window.onload = loadData();
+
+    function loadData() {
+      var xhr = new XMLHttpRequest();
+      var tabledata;
+
+      xhr.open('POST', 'stock.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          var products = JSON.parse(this.responseText);
+          if (products.length > 0) {
+            tabledata = "<table><tr><th><input type='checkbox' id='selectall' class='checkbox' onclick='check()'></th><th>Product ID</th><th>Product Name</th><th>Category</th><th>Brand</th><th>Part No</th><th>M.E. No</th><th>Price</th><th>Quantity</th></tr>";
+            products.forEach(product => {
+              tabledata += "<tr><td><input type='checkbox' class='checkbox' id='select' value='" + product.productid + "'></td><td>" + product.productid + "</td><td>" + product.productname + "</td><td>" + product.category + "</td><td>" + product.brand + "</td><td>" + product.partno
+                + "</td><td>" + product.meno + "</td><td>" + product.price + "</td><td>" + product.quantity + "</td></tr>";
+            });
+            tabledata += "</table>"
+          } else {
+            tabledata = "<div class='massage'>No Records</div>";
+          }
+          document.getElementById("table").innerHTML = tabledata;
+        }
+      }
+      xhr.send("load");
+    }
+
+    function check() {
+      if (document.getElementById("selectall").checked) {
+        document.querySelectorAll("#select").forEach(selection => {
+          selection.checked = true;
+        });
+      } else {
+        document.querySelectorAll("#select").forEach(selection => {
+          selection.checked = false;
+        });
+      }
+    }
+
+    function search() {
+      var xhr = new XMLHttpRequest();
+      var tabledata;
+      var selectedItem = document.getElementById("filter").value;
+      var searchKey = document.getElementById("search").value;
+
+      xhr.open('POST', 'stock.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          var products = JSON.parse(this.responseText);
+          if (products.length > 0) {
+            tabledata = "<table><tr><th><input type='checkbox' id='selectall' class='checkbox' onclick='check()'></th><th>Product ID</th><th>Product Name</th><th>Category</th><th>Brand</th><th>Part No</th><th>M.E. No</th><th>Price</th><th>Quantity</th></tr>";
+            products.forEach(product => {
+              tabledata += "<tr><td><input type='checkbox' class='checkbox' id='select' value='" + product.productid + "'></td><td>" + product.productid + "</td><td>" + product.productname + "</td><td>" + product.category + "</td><td>" + product.brand + "</td><td>" + product.partno
+                + "</td><td>" + product.meno + "</td><td>" + product.price + "</td><td>" + product.quantity + "</td></tr>";
+            });
+            tabledata += "</table>"
+          } else {
+            tabledata = "<div class='massage'>No Records</div>";
+          }
+          document.getElementById("table").innerHTML = tabledata;
+        }
+      }
+      xhr.send(selectedItem + "=" + searchKey);
+    }
+
+    function edit() {
+      if (checkselect() == 1) {
+        document.getElementById("popup").style.display = "flex";
+        document.getElementById("cancel").onclick = function () {
+          document.getElementById("popup").style.display = "none";
+        };
+        document.getElementById("done").onclick = function () {
+          popupConfirm("Are you sure", function (result) {
+            if (result) {
+              editconfirm();
+            }
+          });
+        };
+        document.querySelectorAll("#select").forEach(selection => {
+          if (selection.checked) {
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('POST', 'stock.php', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+            xhr.onload = function () {
+              if (this.status == 200) {
+                var products = JSON.parse(this.responseText);
+                if (products.length == 1) {
+                  products.forEach(product => {
+                    document.getElementById("id").value = product.productid;
+                    document.getElementById("name").value = product.productname;
+                    document.getElementById("category").value = product.category;
+                    document.getElementById("brand").value = product.brand;
+                    document.getElementById("partNo").value = product.partno;
+                    document.getElementById("meNo").value = product.meno;
+                    document.getElementById("price").value = product.price;
+                    document.getElementById("quantity").value = product.quantity;
+                  });
+                }
+              }
+            }
+            xhr.send("selectedid=" + selection.value);
+          }
+        });
+      } else {
+        popupMessage("Please select one record");
+      }
+    }
+
+    function editconfirm() {
+      var productid = document.getElementById("id").value;
+      var name = document.getElementById("name").value;
+      var category = document.getElementById("category").value;
+      var brand = document.getElementById("brand").value;
+      var partno = document.getElementById("partNo").value;
+      var meno = document.getElementById("meNo").value;
+      var price = document.getElementById("price").value;
+      var quantity = document.getElementById("quantity").value;
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('POST', 'stock.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          if (this.responseText) {
+            popupMessage("Record updated Successfully");
+            document.getElementById("popup").style.display = "none";
+            loadData();
+          } else {
+            popupMessage("Failed to update records, Please try again later");
+          }
+        }
+      }
+      xhr.send("editid=" + productid + "&name=" + name + "&category=" + category + "&brand=" + brand + "&partno=" + partno + "&meno=" + meno + "&price=" + price + "&quantity=" + quantity);
+      clearpopuptextfield();
+    }
+
+    function add() {
+      clearpopuptextfield();
+      document.getElementById("popup").style.display = "flex";
+      document.getElementById("cancel").onclick = function () {
+        document.getElementById("popup").style.display = "none";
+      };
+      document.getElementById("done").onclick = function () {
+        insert();
+      };
+    }
+
+    function insert() {
+      var name = document.getElementById("name").value;
+      var category = document.getElementById("category").value;
+      var brand = document.getElementById("brand").value;
+      var partno = document.getElementById("partNo").value;
+      var meno = document.getElementById("meNo").value;
+      var price = document.getElementById("price").value;
+      var quantity = document.getElementById("quantity").value;
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('POST', 'stock.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          if (this.responseText) {
+            popupMessage("Record added Successfully");
+            document.getElementById("popup").style.display = "none";
+            loadData();
+            clearpopuptextfield();
+          } else {
+            popupMessage("Failed to add record, Please try again later");
+          }
+        }
+      }
+      xhr.send("&productname=" + name + "&category=" + category + "&brand=" + brand + "&partno=" + partno + "&meno=" + meno + "&price=" + price + "&quantity=" + quantity);
+    }
+
+    function clearpopuptextfield() {
+      document.getElementById("id").value = "";
+      document.getElementById("name").value = "";
+      document.getElementById("category").value = "";
+      document.getElementById("brand").value = "";
+      document.getElementById("partNo").value = "";
+      document.getElementById("meNo").value = "";
+      document.getElementById("price").value = "";
+      document.getElementById("quantity").value = "";
+    }
+
+    function deletRecords() {
+      if (checkselect()) {
+        popupConfirm("Do you want to delete selected records", function (result) {
+          if (result) {
+            document.querySelectorAll("#select").forEach(selection => {
+              if (selection.checked) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'stock.php', true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+                xhr.onload = function () {
+                  if (this.status == 200) {
+                    if (this.responseText) {
+                      popupMessage("Records deleted successfully");
+                      deselect();
+                      loadData();
+                    } else {
+                      popupMessage("Failed to delete records, Please try again later");
+                    }
+                  }
+                }
+                xhr.send("deleteid=" + selection.value);
+              }
+            });
+          } else {
+            deselect();
+          }
+        });
+      } else {
+        popupMessage("Please select record");
+      }
+    }
+
+    function deselect() {
+      document.querySelectorAll("#select").forEach(selection => {
+        selection.checked = false;
+      });
+      document.getElementById("selectall").checked = false;
+    }
+
+    function popupConfirm(message, callback) {
+      document.getElementById("confirmMessagetext").innerHTML = message;
+      document.getElementById("popupConfirm").style.display = "flex";
+      document.getElementById("confirmMessageOk").onclick = function () {
+        document.getElementById("popupConfirm").style.display = "none";
+        callback(true);
+      };
+      document.getElementById("confirmMessageCancel").onclick = function () {
+        document.getElementById("popupConfirm").style.display = "none";
+        callback(false);
+      };
+    }
+
+    function popupMessage(message) {
+      document.getElementById("popupMessagetext").innerHTML = message;
+      document.getElementById("popupMessage").style.display = "flex";
+      document.getElementById("popupMessageOk").onclick = function () {
+        document.getElementById("popupMessage").style.display = "none";
+      };
+    }
+
+    function checkselect() {
+      var count = 0;
+      document.querySelectorAll("#select").forEach(selection => {
+        if (selection.checked) {
+          count++;
+        }
+      });
+      return count;
+    }
+  </script>
+</body>
+
+</html>

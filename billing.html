@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billing</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url(bg.jpg);
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100vh;
+      user-select: none;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+      backdrop-filter: blur(9px);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: white;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #cccccc;
+      cursor: pointer;
+    }
+
+    .HSide {
+      width: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .textbox {
+      margin: auto;
+      height: 50px;
+      width: 250px;
+      color: white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      font-weight: bold;
+      font-size: 24px;
+      border: 2px solid white;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .text {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .button {
+      margin: auto;
+      height: 50px;
+      width: 250px;
+      color: white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      font-weight: bold;
+      font-size: 24px;
+      border-radius: 10px;
+      border: 2px solid white;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      transform: scale(1.1);
+    }
+
+    .textbox:focus {
+      transform: scale(1.1);
+      outline: none;
+      backdrop-filter: blur(100px);
+    }
+
+    ::placeholder {
+      color: white;
+      opacity: 0.5;
+    }
+
+    .VSide {
+      position: absolute;
+      bottom: 0;
+      left: 330px;
+      width: calc(100% - 350px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      margin-bottom: 20px;
+    }
+
+    .payment,
+    .total {
+      margin: auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .payment>*,
+    .total>* {
+      margin-right: 15px;
+    }
+
+    select {
+      outline: none;
+      min-height: 50px;
+      min-width: 250px;
+      color: white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      font-weight: bold;
+      font-size: 24px;
+      border-radius: 10px;
+      border: 2px solid white;
+      transition: transform 0.3s ease;
+    }
+
+    option {
+      color: black;
+    }
+
+    a {
+      right: 250px;
+      margin-top: 5px;
+      transition: transform 0.3s ease;
+    }
+
+    a:hover {
+      transform: scale(1.1);
+    }
+
+    .table {
+      border-radius: 10px;
+      border: 2px solid white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      margin-bottom: 60px;
+      margin-right: 100px;
+      height: 85vh;
+      width: calc(100% - 500px);
+    }
+
+    .tabledata {
+      width: auto;
+      height: calc(85vh - 50px);
+    }
+
+    table {
+      width: 100%;
+    }
+
+    th,
+    td {
+      border: 2px solid white;
+      color: white;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: rgba(184, 189, 198, 0);
+    }
+
+    .add {
+      position: absolute;
+      bottom: 0;
+      margin: auto;
+      height: 50px;
+      width: 100%;
+      color: white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      font-weight: bold;
+      font-size: 24px;
+      border-radius: 6px;
+      border: 2px solid white;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .add:hover {
+      backdrop-filter: blur(100px);
+    }
+
+    .popup {
+      display: none;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: auto;
+      width: auto;
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: transparent;
+      border: 2px solid white;
+      backdrop-filter: blur(100px);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .suggestion {
+      display: none;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: auto;
+      width: 214px;
+      position: absolute;
+      top: 240px;
+      left: 286px;
+      z-index: 2;
+      background-color: rgb(127, 127, 127);
+      border: 2px solid white;
+      backdrop-filter: blur(100px);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .suggestiontext {
+      border-radius: 6px;
+      border: 2px solid white;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      margin: 5px;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .suggestiontext:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="HSide">
+    <a href="dashboard.html">
+      <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#e8eaed">
+        <path
+          d="m480-320 56-56-64-64h168v-80H472l64-64-56-56-160 160 160 160Zm0 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+      </svg></a>
+    <input type="text" class="textbox" placeholder="Vehicle No">
+    <input type="text" class="textbox" placeholder="Date">
+    <input type="text" class="textbox" placeholder="Present Meter">
+    <input type="text" class="textbox" placeholder="Next Service Meter">
+    <input type="text" class="textbox" placeholder="Phone No">
+    <input type="button" value="Finalize" class="button">
+    <input type="button" value="Cancel" class="button">
+  </div>
+  <div class="table">
+    <div id="table" class="tabledata" style="overflow: auto;">
+      <table>
+        <tr>
+          <th>Service Description</th>
+          <th width='120px'>Quantity</th>
+          <th width='120px'>Price</th>
+        </tr>
+      </table>
+    </div>
+    <input type="button" value="Add Service" class="add" onclick="addService()">
+  </div>
+  <div class="VSide">
+    <div class="payment">
+      <label class="text">Payment Method</label>
+      <select name="payment" id="payment">
+        <option value="cash">Cash</option>
+        <option value="card">Card</option>
+      </select>
+    </div>
+    <div class="total">
+      <label class="text">Total Amount</label>
+      <input type="text" value="0" class="textbox">
+    </div>
+  </div>
+  <div class="popup" id="popup">
+    <table>
+      <tr>
+        <td style="border: none; width: 250px;"><label class="text">Category</label></td>
+        <td style="border: none;">
+          <select id="category" onchange="change()" style="margin: 10px;">
+            <option value="products">Product</option>
+            <option value="services">Service</option>
+          </select>
+        </td>
+      </tr>
+      <tr id="findby">
+        <td style="border: none;"><label class="text">FindBy</label></td>
+        <td style="border: none;">
+          <select id="filter" onchange="change()" style="margin: 10px;">
+            <option value="productname" selected>Product Name</option>
+            <option value="category">Category</option>
+            <option value="brand">Brand</option>
+            <option value="partno">Part No</option>
+            <option value="meno">M.E. No</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text" id="name">Product Name</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="searchKey" onkeyup="searchProduct()"
+            style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Price</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="price" style="margin: 10px;"></td>
+      </tr>
+      <tr id="qty">
+        <td style="border: none;"><label class="text">Quantity</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="quantity" style="margin: 10px;"></td>
+      </tr>
+      <tr id="des">
+        <td style="border: none;"><label class="text">Description</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="description" style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><input type="button" class="button" id="cancel" value="Cancel"></td>
+        <td style="border: none;"><input type="button" class="button" id="done" value="Done" style="margin: 10px;">
+        </td>
+      </tr>
+    </table>
+    <div id="suggestion" class="suggestion"></div>
+  </div>
+  <div class="popup" id="popupConfirm" style="z-index: 2;">
+    <table>
+      <tr>
+        <td colspan="2" style="border: none;" id="confirmMessagetext"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><input type="button" class="button" id="confirmMessageCancel" value="NO"
+            style="margin-top: 10px;"></td>
+        <td style="border: none;"><input type="button" class="button" id="confirmMessageOk" value="YES"
+            style="margin-top: 10px;"></td>
+      </tr>
+    </table>
+  </div>
+  <div class="popup" id="popupMessage" style="z-index: 2;">
+    <label id="popupMessagetext" class="text"></label>
+    <input type="button" class="button" id="popupMessageOk" value="OK" style="margin-top: 10px;">
+  </div>
+  <script>
+    var tableData = [];
+    var products;
+    var services;
+    var id;
+    const deleteSVG = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>';
+
+    function loadData() {
+      var table = " <table><tr><th colspan='2'>Service Description</th><th width='120px'>Quantity</th><th width='120px'>Price</th></tr>";
+      tableData.forEach(record => {
+        table += "<tr><td width='32px'><div onclick='remove(" + tableData.indexOf(record) + ")' style='cursor:pointer;'>" + deleteSVG + "</div></td><td style='text-align:left;'>&emsp;" + record.description + "</td><td>" + record.quantity + "</td><td>" + record.price + "</td></tr>";
+      });
+      table += "</table>";
+      document.getElementById("table").innerHTML = table;
+    }
+
+    function addService() {
+      clearpopuptextfields();
+      document.getElementById("popup").style.display = "flex";
+      document.getElementById("cancel").onclick = function () {
+        document.getElementById("popup").style.display = "none";
+      };
+      document.getElementById("done").onclick = function () {
+        add();
+      };
+    }
+
+    function insertformProduct(index) {
+      var filter = document.getElementById("filter").value;
+      var searchKey = document.getElementById("searchKey");
+      var price = document.getElementById("price");
+      var quantity = document.getElementById("quantity");
+      var description = document.getElementById("description");
+      var product = products[index];
+
+      quantity.value = 1;
+      price.value = product.price;
+      id = product.productid;
+
+      if (filter == "productname") {
+        searchKey.value = product.productname;
+      } else if (filter == "category") {
+        searchKey.value = product.category;
+      } else if (filter == "brand") {
+        searchKey.value = product.brand;
+      } else if (filter == "partno") {
+        searchKey.value = product.partno;
+      } else if (filter == "meno") {
+        searchKey.value = product.meno;
+      }
+
+      if (product.category == "Fuel Filter") {
+        description.value = "Fuel Filter (" + product.brand + " - " + product.partno + ")";
+      } else if (product.category == "Oil Filter") {
+        description.value = "Oil Filter (" + product.brand + " - " + product.partno + ")";
+      } else if (product.category == "Air Filter") {
+        description.value = "Air Filter (" + product.brand + " - " + product.partno + ")";
+      } else if (product.category == "Engine Oil") {
+        description.value = "Engine Oil (" + product.brand + ")";
+      } else if (product.category == "Gas Filter") {
+        description.value = "Gas Filter (" + product.brand + ")";
+      }
+
+      document.getElementById("suggestion").style.display = "none";
+    }
+
+    function insertformService(index) {
+      var searchKey = document.getElementById("searchKey");
+      var price = document.getElementById("price");
+      var quantity = document.getElementById("quantity");
+      var description = document.getElementById("description");
+      var service = services[index];
+
+      quantity.value = 1;
+      price.value = service.price;
+      id = service.serviceid;
+      description.value = service.description;
+      searchKey.value = service.description;
+
+      document.getElementById("suggestion").style.display = "none";
+    }
+
+    function add() {
+      var category = document.getElementById("category").value;
+      var description = document.getElementById("description").value;
+      var price = document.getElementById("price").value;
+      var quantity = document.getElementById("quantity").value;
+      tableData.push({
+        id: id,
+        type: category,
+        description: description,
+        quantity: quantity,
+        price: price
+      });
+      loadData();
+      document.getElementById("popup").style.display = "none";
+    }
+
+    function remove(index) {
+      popupConfirm("Are you sure", function (result) {
+        if (result) {
+          tableData.splice(index, 1);
+          loadData();
+        }
+      });
+    }
+
+    document.getElementById("table").addEventListener("scroll", function () {
+      if (this.scrollTop > 10) {
+        document.querySelectorAll("th").forEach(element => {
+          element.style.background = "rgba(67, 74, 83, 1)"
+        });
+      } else {
+        document.querySelectorAll("th").forEach(element => {
+          element.style.background = "rgba(0, 0, 0, 0)"
+        });
+      }
+    })
+
+    function change() {
+      var category = document.getElementById("category").value;
+      var name = document.getElementById("name");
+      var filter = document.getElementById("filter").value;
+      var findby = document.getElementById("findby");
+      var qty = document.getElementById("qty");
+      var des = document.getElementById("des");
+      var suggestion = document.getElementById("suggestion");
+
+      if (category == "products") {
+        document.getElementById("searchKey").onkeyup = function () {
+          searchProduct();
+        };
+        findby.style.display = "table-row";
+        qty.style.display = "table-row";
+        des.style.display = "table-row";
+        suggestion.style.top = "240px";
+        if (filter == "productname") {
+          name.innerHTML = "Product Name";
+        } else if (filter == "category") {
+          name.innerHTML = "Category";
+        } else if (filter == "brand") {
+          name.innerHTML = "Brand";
+        } else if (filter == "partno") {
+          name.innerHTML = "Part No";
+        } else if (filter == "meno") {
+          name.innerHTML = "M.E. No";
+        }
+      } else if (category == "services") {
+        document.getElementById("searchKey").onkeyup = function () {
+          searchService();
+        };
+        suggestion.style.top = "170px";
+        name.innerHTML = "Service Type";
+        findby.style.display = "none";
+        qty.style.display = "none";
+        des.style.display = "none";
+      }
+    }
+
+    function searchProduct() {
+      var xhr = new XMLHttpRequest();
+      var category = document.getElementById("category").value;
+      var searchKey = document.getElementById("searchKey").value;
+      var filter = document.getElementById("filter").value;
+      var suggestion = document.getElementById("suggestion");
+
+      xhr.open('POST', 'billing.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          products = JSON.parse(this.responseText);
+          if (products.length > 0 && searchKey) {
+            var suggestiontext = "";
+            suggestion.style.display = "flex";
+            products.forEach(product => {
+              suggestiontext += "<lable class='suggestiontext' onclick='insertformProduct(" + products.indexOf(product) + ")'>" + product.productname + "-" + product.category + "-" + product.brand + "</lable>";
+            });
+            suggestion.innerHTML = suggestiontext;
+          } else {
+            suggestion.style.display = "none";
+          }
+        }
+      }
+      xhr.send("category=" + category + "&filter=" + filter + "&searchKey=" + searchKey);
+    }
+
+    function searchService() {
+      var xhr = new XMLHttpRequest();
+      var category = document.getElementById("category").value;
+      var searchKey = document.getElementById("searchKey").value;
+      var suggestion = document.getElementById("suggestion");
+
+      xhr.open('POST', 'billing.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          services = JSON.parse(this.responseText);
+          if (services.length > 0 && searchKey) {
+            var suggestiontext = "";
+            suggestion.style.display = "flex";
+            services.forEach(service => {
+              suggestiontext += "<lable class='suggestiontext' onclick='insertformService(" + services.indexOf(service) + ")'>" + service.description + "</lable>";
+            });
+            suggestion.innerHTML = suggestiontext;
+          } else {
+            suggestion.style.display = "none";
+          }
+        }
+      }
+      xhr.send("category=" + category + "&filter=description&searchKey=" + searchKey);
+    }
+
+    function insert() {
+      var name = document.getElementById("vehicleNo").value;
+      var category = document.getElementById("Date").value;
+      var brand = document.getElementById("presentMeter").value;
+      var partno = document.getElementById("nextMeter").value;
+      var meno = document.getElementById("phoneNo").value;
+      var quantity = document.getElementById("paymentMethod").value;
+      var quantity = document.getElementById("totalAmount").value;
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('POST', 'stock.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          if (this.responseText) {
+            popupMessage("Record added Successfully");
+            document.getElementById("popup").style.display = "none";
+            loadData();
+            clearpopuptextfield();
+          } else {
+            popupMessage("Failed to add record, Please try again later");
+          }
+        }
+      }
+      xhr.send("&productname=" + name + "&category=" + category + "&brand=" + brand + "&partno=" + partno + "&meno=" + meno + "&price=" + price + "&quantity=" + quantity);
+    }
+
+    function clearpopuptextfields() {
+      document.getElementById("searchKey").value = "";
+      document.getElementById("description").value = "";
+      document.getElementById("price").value = "";
+      document.getElementById("quantity").value = "";
+    }
+
+    function popupConfirm(message, callback) {
+      document.getElementById("confirmMessagetext").innerHTML = message;
+      document.getElementById("popupConfirm").style.display = "flex";
+      document.getElementById("confirmMessageOk").onclick = function () {
+        document.getElementById("popupConfirm").style.display = "none";
+        callback(true);
+      };
+      document.getElementById("confirmMessageCancel").onclick = function () {
+        document.getElementById("popupConfirm").style.display = "none";
+        callback(false);
+      };
+    }
+
+    function popupMessage(message) {
+      document.getElementById("popupMessagetext").innerHTML = message;
+      document.getElementById("popupMessage").style.display = "flex";
+      document.getElementById("popupMessageOk").onclick = function () {
+        document.getElementById("popupMessage").style.display = "none";
+      };
+    }
+  </script>
+</body>
+
+</html>

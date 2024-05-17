@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bills</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url(bg.jpg);
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    .topbar {
+      display: flex;
+      width: 100%;
+      flex-direction: row;
+      margin: 10px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .button {
+      text-align: center;
+      margin: auto;
+      height: 50px;
+      width: 100px;
+      color: white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      font-weight: bold;
+      font-size: 24px;
+      border-radius: 10px;
+      border: 2px solid white;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .textbox {
+      margin: auto;
+      height: 50px;
+      width: 250px;
+      color: white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      font-weight: bold;
+      font-size: 24px;
+      border: 2px solid white;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .button:hover {
+      transform: scale(1.1);
+    }
+
+    .textbox:focus {
+      transform: scale(1.1);
+      outline: none;
+      backdrop-filter: blur(100px);
+    }
+
+    select {
+      outline: none;
+      height: 50px;
+      width: 250px;
+      color: white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      font-weight: bold;
+      font-size: 24px;
+      border-radius: 10px;
+      border: 2px solid white;
+      transition: transform 0.3s ease;
+    }
+
+    option {
+      color: black;
+    }
+
+    .search {
+      border-radius: 10px;
+      border: 2px solid white;
+      display: flex;
+      flex-direction: row;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    a {
+      right: 250px;
+      margin-left: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .table {
+      margin: 20px;
+      border-radius: 10px;
+      border: 2px solid white;
+      background: transparent;
+      backdrop-filter: blur(9px);
+      height: 80vh;
+      width: 95%;
+    }
+
+    table {
+      width: 100%;
+    }
+
+    th,
+    td {
+      border: 2px solid white;
+      color: white;
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <a href="dashboard.html">
+      <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#e8eaed">
+        <path
+          d="m480-320 56-56-64-64h168v-80H472l64-64-56-56-160 160 160 160Zm0 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+      </svg></a>
+    <div class="search">
+      <select name="filter">
+        <option value="id">Bill No</option>
+        <option value="id">Vehicle No</option>
+        <option value="name">Vehicle Type</option>
+        <option value="category">Date</option>
+        <option value="brand">Phone No</option>
+      </select>
+      <input type="text" class="textbox">
+      <input type="button" class="button" value="Search">
+    </div>
+    <input class="button" value="Edit">
+    <input class="button" value="Delete">
+    <input class="button" value="Info">
+  </div>
+  <div class="table">
+    <table>
+      <tr>
+        <th>Bill No</th>
+        <th>Vehicle No</th>
+        <th>Vehicle Type</th>
+        <th>Date</th>
+        <th>Phone No</th>
+        <th>Present Meter</th>
+        <th>Next Meter</th>
+        <th>Total Amount</th>
+      </tr>
+      <tr></tr>
+    </table>
+  </div>
+</body>
+
+</html>
