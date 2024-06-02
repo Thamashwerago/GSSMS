@@ -20,6 +20,14 @@
       user-select: none;
     }
 
+    ::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+
+    ::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
     .topbar {
       display: flex;
       width: 100%;
@@ -71,8 +79,8 @@
 
     select {
       outline: none;
-      height: 50px;
-      width: 250px;
+      min-height: 50px;
+      min-width: 250px;
       color: white;
       background: transparent;
       backdrop-filter: blur(9px);
@@ -121,6 +129,23 @@
       border: 2px solid white;
       color: white;
       font-size: 24px;
+      text-align: center;
+    }
+
+    .checkbox {
+      height: 20px;
+      width: 20px;
+      accent-color: white;
+    }
+
+    .massage {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      position: absolute;
+      font-size: 24px;
+      color: white;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -133,21 +158,22 @@
           d="m480-320 56-56-64-64h168v-80H472l64-64-56-56-160 160 160 160Zm0 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
       </svg></a>
     <div class="search">
-      <select name="filter">
-        <option value="id">Bill No</option>
-        <option value="id">Vehicle No</option>
-        <option value="name">Vehicle Type</option>
-        <option value="category">Date</option>
-        <option value="brand">Phone No</option>
+      <select id="filter" style="border-radius: 6px 0px 0px 6px;" onchange="changetype()">
+        <option value="bills.billid">Bill No</option>
+        <option value="bills.vehicleno">Vehicle No</option>
+        <option value="vehicles.vehicletype">Vehicle Type</option>
+        <option value="bills.date">Date</option>
+        <option value="customers.phoneno">Phone No</option>
+        <option value="bills.paymentmethod">Payment Type</option>
       </select>
-      <input type="text" class="textbox">
-      <input type="button" class="button" value="Search">
+      <input type="number" id="search" class="textbox" onkeyup="search()" onchange="search()" placeholder="Search"
+        style="border-radius: 0px 6px 6px 0px;">
     </div>
-    <input class="button" value="Edit">
+    <input class="button" value="Add" onclick="location.href = 'billing.html';">
     <input class="button" value="Delete">
     <input class="button" value="Info">
   </div>
-  <div class="table">
+  <div class="table" id="table">
     <table>
       <tr>
         <th>Bill No</th>
@@ -157,11 +183,123 @@
         <th>Phone No</th>
         <th>Present Meter</th>
         <th>Next Meter</th>
+        <th>Payment Type</th>
         <th>Total Amount</th>
       </tr>
-      <tr></tr>
     </table>
   </div>
+  <script>
+    window.onload = fetchData();
+
+    function loadData(records) {
+      var tabledata;
+      if (records.length > 0) {
+        tabledata = "<table><tr><th><input type='checkbox' id='selectall' class='checkbox' onclick='check()'></th><th>Bill No</th><th>Vehicle No</th><th>Vehicle Type</th><th>Date</th><th>Phone No</th><th>Present Meter</th><th>Next Meter</th><th>Payment Type</th><th>Total Amount</th></tr>";
+        records.forEach(record => {
+          tabledata += "<tr><td><input type='checkbox' class='checkbox' id='select' value='" + record.billid + "'></td><td>" + record.billid + "</td><td>" + record.vehicleno + "</td><td>" + record.vehicletype + "</td><td>" + record.date + "</td><td>" + record.phoneno + "</td><td>" + record.presentmeter + "</td><td>" + record.nextmeter + "</td><td>" + record.paymentmethod + "</td><td>" + record.amount + "</td></tr>";
+        });
+        tabledata += "</table>"
+      } else {
+        tabledata = "<div class='massage'>No Records</div>";
+      }
+      document.getElementById("table").innerHTML = tabledata;
+    }
+
+    function fetchData() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'bills.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          loadData(JSON.parse(this.responseText));
+        }
+      }
+      xhr.send("load");
+    }
+
+    function search() {
+      var xhr = new XMLHttpRequest();
+      var selectedItem = document.getElementById("filter").value;
+      var searchKey = document.getElementById("search").value;
+
+      xhr.open('POST', 'bills.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          loadData(JSON.parse(this.responseText));
+        }
+      }
+      xhr.send("filter&selectedItem=" + selectedItem + "&searchKey=" + searchKey);
+    }
+
+    function changetype() {
+      var selectedItem = document.getElementById("filter").value;
+      var searchKey = document.getElementById("search");
+
+      searchKey.value = "";
+      fetchData();
+
+      if (selectedItem == "bills.billid" || selectedItem == "customers.phoneno") {
+        searchKey.type = "number";
+      } else if (selectedItem == "bills.date") {
+        searchKey.type = "date";
+      } else {
+        searchKey.type = "text";
+      }
+    }
+
+    function check() {
+      if (document.getElementById("selectall").checked) {
+        document.querySelectorAll("#select").forEach(selection => {
+          selection.checked = true;
+        });
+      } else {
+        document.querySelectorAll("#select").forEach(selection => {
+          selection.checked = false;
+        });
+      }
+    }
+
+    function deselect() {
+      document.querySelectorAll("#select").forEach(selection => {
+        selection.checked = false;
+      });
+      document.getElementById("selectall").checked = false;
+    }
+
+    function popupConfirm(message, callback) {
+      document.getElementById("confirmMessagetext").innerHTML = message;
+      document.getElementById("popupConfirm").style.display = "flex";
+      document.getElementById("confirmMessageOk").onclick = function () {
+        document.getElementById("popupConfirm").style.display = "none";
+        callback(true);
+      };
+      document.getElementById("confirmMessageCancel").onclick = function () {
+        document.getElementById("popupConfirm").style.display = "none";
+        callback(false);
+      };
+    }
+
+    function popupMessage(message) {
+      document.getElementById("popupMessagetext").innerHTML = message;
+      document.getElementById("popupMessage").style.display = "flex";
+      document.getElementById("popupMessageOk").onclick = function () {
+        document.getElementById("popupMessage").style.display = "none";
+      };
+    }
+
+    function checkselect() {
+      var count = 0;
+      document.querySelectorAll("#select").forEach(selection => {
+        if (selection.checked) {
+          count++;
+        }
+      });
+      return count;
+    }
+  </script>
 </body>
 
 </html>

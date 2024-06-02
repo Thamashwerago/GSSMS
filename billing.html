@@ -39,6 +39,14 @@
       cursor: pointer;
     }
 
+    ::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+
+    ::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
     .HSide {
       width: 300px;
       display: flex;
@@ -270,13 +278,14 @@
         <path
           d="m480-320 56-56-64-64h168v-80H472l64-64-56-56-160 160 160 160Zm0 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
       </svg></a>
-    <input type="text" class="textbox" placeholder="Vehicle No">
-    <input type="text" class="textbox" placeholder="Date">
-    <input type="text" class="textbox" placeholder="Present Meter">
-    <input type="text" class="textbox" placeholder="Next Service Meter">
-    <input type="text" class="textbox" placeholder="Phone No">
-    <input type="button" value="Finalize" class="button">
-    <input type="button" value="Cancel" class="button">
+    <input type="text" class="textbox" placeholder="Vehicle No" id="vehiclekey" onkeyup="searchVehicle()">
+    <input type="date" class="textbox" placeholder="Date" id="date">
+    <input type="number" class="textbox" placeholder="Present Meter" id="presentMeter">
+    <input type="number" class="textbox" placeholder="Next Service Meter" id="nextMeter">
+    <input type="number" class="textbox" placeholder="Phone No" id="phonekey" onkeyup="searchPhoneNo()">
+    <input type="button" value="Finalize" class="button" onclick="insert()">
+    <input type="button" value="Cancel" class="button" onclick="location.href = 'dashboard.html';">
+    <div id="suggestion" class="suggestion" style="top: 140px; left:20px;"></div>
   </div>
   <div class="table">
     <div id="table" class="tabledata" style="overflow: auto;">
@@ -288,7 +297,7 @@
         </tr>
       </table>
     </div>
-    <input type="button" value="Add Service" class="add" onclick="addService()">
+    <input type="button" value="Add" class="add" onclick="checkadd()">
   </div>
   <div class="VSide">
     <div class="payment">
@@ -300,21 +309,16 @@
     </div>
     <div class="total">
       <label class="text">Total Amount</label>
-      <input type="text" value="0" class="textbox">
+      <input type="number" id="total" value="0" class="textbox">
     </div>
   </div>
-  <div class="popup" id="popup">
+  <div class="popup" id="selection">
+    <input type="button" onclick="choose(true)" class="button" style="margin: 5px;" value="Product">
+    <input type="button" onclick="choose(false)" class="button" style="margin: 5px;" value="Service">
+  </div>
+  <div class="popup" id="product">
     <table>
       <tr>
-        <td style="border: none; width: 250px;"><label class="text">Category</label></td>
-        <td style="border: none;">
-          <select id="category" onchange="change()" style="margin: 10px;">
-            <option value="products">Product</option>
-            <option value="services">Service</option>
-          </select>
-        </td>
-      </tr>
-      <tr id="findby">
         <td style="border: none;"><label class="text">FindBy</label></td>
         <td style="border: none;">
           <select id="filter" onchange="change()" style="margin: 10px;">
@@ -327,7 +331,7 @@
         </td>
       </tr>
       <tr>
-        <td style="border: none;"><label class="text" id="name">Product Name</label></td>
+        <td style="border: none;"><label class="text" id="selectionName">Product Name</label></td>
         <td style="border: none;"><input type="text" class="textbox" id="searchKey" onkeyup="searchProduct()"
             style="margin: 10px;"></td>
       </tr>
@@ -335,21 +339,107 @@
         <td style="border: none;"><label class="text">Price</label></td>
         <td style="border: none;"><input type="text" class="textbox" id="price" style="margin: 10px;"></td>
       </tr>
-      <tr id="qty">
+      <tr>
         <td style="border: none;"><label class="text">Quantity</label></td>
         <td style="border: none;"><input type="text" class="textbox" id="quantity" style="margin: 10px;"></td>
       </tr>
-      <tr id="des">
+      <tr>
         <td style="border: none;"><label class="text">Description</label></td>
         <td style="border: none;"><input type="text" class="textbox" id="description" style="margin: 10px;"></td>
       </tr>
       <tr>
-        <td style="border: none;"><input type="button" class="button" id="cancel" value="Cancel"></td>
-        <td style="border: none;"><input type="button" class="button" id="done" value="Done" style="margin: 10px;">
+        <td style="border: none;"><input type="button" class="button"
+            onclick="document.getElementById('product').style.display = 'none';" value="Cancel"></td>
+        <td style="border: none;"><input type="button" class="button" onclick="addProduct()" value="Done"
+            style="margin: 10px;">
         </td>
       </tr>
     </table>
-    <div id="suggestion" class="suggestion"></div>
+    <div id="suggestionProduct" class="suggestion" style="top: 170px; left:286px;"></div>
+  </div>
+  <div class="popup" id="service">
+    <table>
+      <tr>
+        <td style="border: none;"><label class="text">Service Type</label></td>
+        <td style="border: none;">
+          <select id="serviceSelection" onchange="insertformService()" style="margin: 10px;"></select>
+        </td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Price</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="displayprice" style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><input type="button" class="button"
+            onclick="document.getElementById('service').style.display = 'none';" value="Cancel"></td>
+        <td style="border: none;"><input type="button" class="button" onclick="addService()" value="Done"
+            style="margin: 10px;">
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="popup" id="phone">
+    <table>
+      <tr>
+        <td style="border: none;"><label class="text">Phone No</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="phoneno" style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Name</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="customerName" style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><input type="button" class="button"
+            onclick="document.getElementById('phone').style.display = 'none';" value="Cancel"></td>
+        <td style="border: none;"><input type="button" class="button" onclick="addPhone()" value="Done"
+            style="margin: 10px;">
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="popup" id="vehicle">
+    <table>
+      <tr>
+        <td style="border: none;"><label class="text">Vehicle No</label></td>
+        <td style="border: none;"><input type="text" class="textbox" id="vehicleno" style="margin: 10px;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Vehicle Type</label></td>
+        <td style="border: none;">
+          <select id="vehicletype" style="margin: 10px;">
+            <option value="car">Car</option>
+            <option value="van">Van</option>
+            <option value="jeep">Jeep</option>
+            <option value="bus">Bus</option>
+            <option value="lorry">Lorry</option>
+            <option value="threewheel">Three Wheel</option>
+            <option value="bicycle">Bicycle</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="border: none;"><label class="text">Brand</label></td>
+        <td style="border: none;">
+          <select id="vehiclebrand" style="margin: 10px;">
+            <option value="Toyota">Toyota</option>
+            <option value="Honda">Honda</option>
+            <option value="BMW">BMW</option>
+            <option value="Hyundai">Hyundai</option>
+            <option value="Audi">Audi</option>
+            <option value="Mazda">Mazda</option>
+            <option value="Nissan">Nissan</option>
+            <option value="Lexus">Lexus</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="border: none;"><input type="button" class="button"
+            onclick="document.getElementById('vehicle').style.display = 'none';" value="Cancel"></td>
+        <td style="border: none;"><input type="button" class="button" onclick="addVehicle()" value="Done"
+            style="margin: 10px;">
+        </td>
+      </tr>
+    </table>
   </div>
   <div class="popup" id="popupConfirm" style="z-index: 2;">
     <table>
@@ -368,11 +458,16 @@
     <label id="popupMessagetext" class="text"></label>
     <input type="button" class="button" id="popupMessageOk" value="OK" style="margin-top: 10px;">
   </div>
+  <script src="userVerification.js"></script>
   <script>
     var tableData = [];
     var products;
     var services;
     var id;
+    var vehicles;
+    var customers;
+    var vehicleType;
+    var customerId;
     const deleteSVG = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>';
 
     function loadData() {
@@ -384,15 +479,31 @@
       document.getElementById("table").innerHTML = table;
     }
 
-    function addService() {
+    function updateTotal() {
+      var total = 0;
+      tableData.forEach(data => {
+        total += parseInt(data.price);
+      });
+      document.getElementById("total").value = total;
+    }
+
+    function checkadd() {
+      if (vehicleType) {
+        document.getElementById('selection').style.display = 'flex';
+      } else {
+        popupMessage("Add vehicle No first");
+      }
+    }
+
+    function choose(choice) {
       clearpopuptextfields();
-      document.getElementById("popup").style.display = "flex";
-      document.getElementById("cancel").onclick = function () {
-        document.getElementById("popup").style.display = "none";
-      };
-      document.getElementById("done").onclick = function () {
-        add();
-      };
+      document.getElementById("selection").style.display = "none";
+      if (choice) {
+        document.getElementById("product").style.display = "flex";
+      } else {
+        document.getElementById("service").style.display = "flex";
+        searchService();
+      }
     }
 
     function insertformProduct(index) {
@@ -431,39 +542,134 @@
         description.value = "Gas Filter (" + product.brand + ")";
       }
 
-      document.getElementById("suggestion").style.display = "none";
+      document.getElementById("suggestionProduct").style.display = "none";
     }
 
-    function insertformService(index) {
-      var searchKey = document.getElementById("searchKey");
-      var price = document.getElementById("price");
+    function insertformService() {
+      var index = document.getElementById("serviceSelection").value;
+      var displayprice = document.getElementById("displayprice");
       var quantity = document.getElementById("quantity");
       var description = document.getElementById("description");
       var service = services[index];
 
       quantity.value = 1;
-      price.value = service.price;
+      displayprice.value = service.price;
       id = service.serviceid;
       description.value = service.description;
-      searchKey.value = service.description;
+    }
 
+    function insertformVehicle(index) {
+      document.getElementById("vehiclekey").value = vehicles[index].vehicleno;
+      vehicleType = vehicles[index].vehicletype;
       document.getElementById("suggestion").style.display = "none";
     }
 
-    function add() {
-      var category = document.getElementById("category").value;
+    function insertformPhone(index) {
+      document.getElementById("phonekey").value = customers[index].phoneno;
+      customerId = customers[index].customerid;
+      document.getElementById("suggestion").style.display = "none";
+    }
+
+    function addVehicle() {
+      var vehicleno = document.getElementById("vehicleno").value;
+      var vehicletype = document.getElementById("vehicletype").value;
+      var brand = document.getElementById("vehiclebrand").value;
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('POST', 'vehicle.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          if (this.responseText) {
+            popupMessage("Record added Successfully");
+            document.getElementById("vehicle").style.display = "none";
+            document.getElementById("vehiclekey").value = vehicleno;
+            vehicleType = vehicletype;
+          } else {
+            popupMessage("Failed to add record, Please try again later");
+          }
+        }
+      }
+      xhr.send("vehicleNo=" + vehicleno + "&vehicleType=" + vehicletype + "&vehicleBrand=" + brand);
+    }
+
+    function addPhone() {
+      var phoneno = document.getElementById("phoneno").value;
+      var name = document.getElementById("customerName").value;
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('POST', 'customer.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          if (this.responseText) {
+            popupMessage("Record added Successfully");
+            document.getElementById("phone").style.display = "none";
+            document.getElementById("phonekey").value = phoneno;
+            getCustomerId();
+          } else {
+            popupMessage("Failed to add record, Please try again later");
+          }
+        }
+      }
+      xhr.send("phoneNo=" + phoneno + "&name=" + name);
+    }
+
+    function getCustomerId() {
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('POST', 'customer.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          var results = JSON.parse(this.responseText);
+          if (results.length > 0) {
+            results.forEach(result => {
+              customerId = result.customerid;
+            });
+          } else {
+            popupMessage("Error, Can't find customer id");
+          }
+        }
+      }
+      xhr.send("customerid");
+    }
+
+    function addProduct() {
       var description = document.getElementById("description").value;
       var price = document.getElementById("price").value;
       var quantity = document.getElementById("quantity").value;
       tableData.push({
         id: id,
-        type: category,
+        type: "product",
+        description: description,
+        quantity: quantity,
+        price: price * quantity
+      });
+      loadData();
+      updateTotal();
+      document.getElementById("product").style.display = "none";
+    }
+
+    function addService() {
+      var description = document.getElementById("description").value;
+      var price = document.getElementById("displayprice").value;
+      var quantity = document.getElementById("quantity").value;
+      tableData.push({
+        id: id,
+        type: "service",
         description: description,
         quantity: quantity,
         price: price
       });
       loadData();
-      document.getElementById("popup").style.display = "none";
+      updateTotal();
+      document.getElementById("service").style.display = "none";
     }
 
     function remove(index) {
@@ -471,6 +677,7 @@
         if (result) {
           tableData.splice(index, 1);
           loadData();
+          updateTotal();
         }
       });
     }
@@ -488,51 +695,27 @@
     })
 
     function change() {
-      var category = document.getElementById("category").value;
-      var name = document.getElementById("name");
+      var selectionName = document.getElementById("selectionName");
       var filter = document.getElementById("filter").value;
-      var findby = document.getElementById("findby");
-      var qty = document.getElementById("qty");
-      var des = document.getElementById("des");
-      var suggestion = document.getElementById("suggestion");
 
-      if (category == "products") {
-        document.getElementById("searchKey").onkeyup = function () {
-          searchProduct();
-        };
-        findby.style.display = "table-row";
-        qty.style.display = "table-row";
-        des.style.display = "table-row";
-        suggestion.style.top = "240px";
-        if (filter == "productname") {
-          name.innerHTML = "Product Name";
-        } else if (filter == "category") {
-          name.innerHTML = "Category";
-        } else if (filter == "brand") {
-          name.innerHTML = "Brand";
-        } else if (filter == "partno") {
-          name.innerHTML = "Part No";
-        } else if (filter == "meno") {
-          name.innerHTML = "M.E. No";
-        }
-      } else if (category == "services") {
-        document.getElementById("searchKey").onkeyup = function () {
-          searchService();
-        };
-        suggestion.style.top = "170px";
-        name.innerHTML = "Service Type";
-        findby.style.display = "none";
-        qty.style.display = "none";
-        des.style.display = "none";
+      if (filter == "productname") {
+        selectionName.innerHTML = "Product Name";
+      } else if (filter == "category") {
+        selectionName.innerHTML = "Category";
+      } else if (filter == "brand") {
+        selectionName.innerHTML = "Brand";
+      } else if (filter == "partno") {
+        selectionName.innerHTML = "Part No";
+      } else if (filter == "meno") {
+        selectionName.innerHTML = "M.E. No";
       }
     }
 
     function searchProduct() {
       var xhr = new XMLHttpRequest();
-      var category = document.getElementById("category").value;
       var searchKey = document.getElementById("searchKey").value;
       var filter = document.getElementById("filter").value;
-      var suggestion = document.getElementById("suggestion");
+      var suggestion = document.getElementById("suggestionProduct");
 
       xhr.open('POST', 'billing.php', true);
       xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
@@ -552,14 +735,11 @@
           }
         }
       }
-      xhr.send("category=" + category + "&filter=" + filter + "&searchKey=" + searchKey);
+      xhr.send("filter=" + filter + "&searchKey=" + searchKey);
     }
 
     function searchService() {
       var xhr = new XMLHttpRequest();
-      var category = document.getElementById("category").value;
-      var searchKey = document.getElementById("searchKey").value;
-      var suggestion = document.getElementById("suggestion");
 
       xhr.open('POST', 'billing.php', true);
       xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
@@ -567,48 +747,176 @@
       xhr.onload = function () {
         if (this.status == 200) {
           services = JSON.parse(this.responseText);
-          if (services.length > 0 && searchKey) {
+          if (services.length > 0) {
+            options = "<option selected disabled>Select</option>";
+            services.forEach(service => {
+              options += "<option value='" + services.indexOf(service) + "'>" + service.description + "</option>";
+            });
+            document.getElementById("serviceSelection").innerHTML = options;
+          }
+        }
+      }
+      xhr.send("vehicleType=" + vehicleType);
+    }
+
+    function searchVehicle() {
+      var xhr = new XMLHttpRequest();
+      var searchKey = document.getElementById("vehiclekey").value;
+      var suggestion = document.getElementById("suggestion");
+      suggestion.style.top = "140px";
+
+      xhr.open('POST', 'vehicle.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          vehicles = JSON.parse(this.responseText);
+          if (vehicles.length > 0 && searchKey) {
             var suggestiontext = "";
             suggestion.style.display = "flex";
-            services.forEach(service => {
-              suggestiontext += "<lable class='suggestiontext' onclick='insertformService(" + services.indexOf(service) + ")'>" + service.description + "</lable>";
+            vehicles.forEach(vehicle => {
+              suggestiontext += "<lable class='suggestiontext' onclick='insertformVehicle(" + vehicles.indexOf(vehicle) + ")'>" + vehicle.vehicleno + "</lable>";
             });
             suggestion.innerHTML = suggestiontext;
+          } else if (searchKey) {
+            suggestion.innerHTML = "<lable class='suggestiontext' onclick='showAddVehicle()'>Add Vehicle</lable>";
           } else {
             suggestion.style.display = "none";
           }
         }
       }
-      xhr.send("category=" + category + "&filter=description&searchKey=" + searchKey);
+      xhr.send("vehicleno=" + searchKey);
+    }
+
+    function showAddVehicle() {
+      document.getElementById('vehicle').style.display = 'flex';
+      document.getElementById("suggestion").style.display = "none";
+      document.getElementById("vehicleno").value = document.getElementById("vehiclekey").value;
+    }
+
+    function showAddPhone() {
+      document.getElementById('phone').style.display = 'flex';
+      document.getElementById("suggestion").style.display = "none";
+      document.getElementById("phoneno").value = document.getElementById("phonekey").value;
+    }
+
+    function searchPhoneNo() {
+      var xhr = new XMLHttpRequest();
+      var searchKey = document.getElementById("phonekey").value;
+      var suggestion = document.getElementById("suggestion");
+      suggestion.style.top = "600px";
+
+      xhr.open('POST', 'customer.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          customers = JSON.parse(this.responseText);
+          if (customers.length > 0 && searchKey) {
+            var suggestiontext = "";
+            suggestion.style.display = "flex";
+            customers.forEach(customer => {
+              suggestiontext += "<lable class='suggestiontext' onclick='insertformPhone(" + customers.indexOf(customer) + ")'>" + customer.phoneno + "</lable>";
+            });
+            suggestion.innerHTML = suggestiontext;
+          } else if (searchKey) {
+            suggestion.innerHTML = "<lable class='suggestiontext' onclick='showAddPhone()'>Add Customer</lable>";
+          } else {
+            suggestion.style.display = "none";
+          }
+        }
+      }
+      xhr.send("phoneno=" + searchKey);
     }
 
     function insert() {
-      var name = document.getElementById("vehicleNo").value;
-      var category = document.getElementById("Date").value;
-      var brand = document.getElementById("presentMeter").value;
-      var partno = document.getElementById("nextMeter").value;
-      var meno = document.getElementById("phoneNo").value;
-      var quantity = document.getElementById("paymentMethod").value;
-      var quantity = document.getElementById("totalAmount").value;
+      var vehicleno = document.getElementById("vehiclekey").value;
+      var date = document.getElementById("date").value;
+      var meter = document.getElementById("presentMeter").value;
+      var nextMeter = document.getElementById("nextMeter").value;
+      var payment = document.getElementById("payment").value;
+      var total = document.getElementById("total").value;
 
       var xhr = new XMLHttpRequest();
 
-      xhr.open('POST', 'stock.php', true);
+      xhr.open('POST', 'billing.php', true);
       xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
 
       xhr.onload = function () {
         if (this.status == 200) {
           if (this.responseText) {
             popupMessage("Record added Successfully");
-            document.getElementById("popup").style.display = "none";
-            loadData();
-            clearpopuptextfield();
+            getBillId().then(function (billid) {
+              tableData.forEach(record => {
+                addBillItem(billid, record);
+                if (record.type = "product") {
+                  deductItem(record);
+                }
+              });
+              cleartextfield();
+            });
           } else {
             popupMessage("Failed to add record, Please try again later");
           }
         }
       }
-      xhr.send("&productname=" + name + "&category=" + category + "&brand=" + brand + "&partno=" + partno + "&meno=" + meno + "&price=" + price + "&quantity=" + quantity);
+      xhr.send("&vehicleNo=" + vehicleno + "&customerId=" + customerId + "&date=" + date + "&presentMeter=" + meter + "&nextMeter=" + nextMeter + "&payment=" + payment + "&total=" + total);
+    }
+
+    async function getBillId() {
+      var result = new Promise(function (resolve) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'billing.php', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+        xhr.onload = function () {
+          if (this.status == 200) {
+            var results = JSON.parse(this.responseText);
+            if (results.length > 0) {
+              results.forEach(result => {
+                billId = result.billid;
+              });
+              resolve(billId);
+            } else {
+              popupMessage("Error, Can't find bill id");
+            }
+          }
+        }
+        xhr.send("billid");
+      });
+      return (await result);
+    }
+
+    function addBillItem(id, item) {
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('POST', 'billing.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          if (this.responseText) {
+
+          }
+        }
+      }
+      xhr.send("billId=" + id + "&itemid=" + item.id + "&type=" + item.type + "&des=" + item.description + "&qty=" + item.quantity + "&price=" + item.price);
+    }
+
+    function deductItem(item) {
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('POST', 'billing.php', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+      xhr.onload = function () {
+        if (this.status == 200) {
+          if (this.responseText) {
+
+          }
+        }
+      }
+      xhr.send("&productid=" + item.id + "&qty=" + item.quantity);
     }
 
     function clearpopuptextfields() {
@@ -616,6 +924,19 @@
       document.getElementById("description").value = "";
       document.getElementById("price").value = "";
       document.getElementById("quantity").value = "";
+      document.getElementById("displayprice").value = "";
+    }
+
+    function cleartextfield() {
+      document.getElementById("vehiclekey").value = "";
+      document.getElementById("date").value = "";
+      document.getElementById("presentMeter").value = "";
+      document.getElementById("nextMeter").value = "";
+      document.getElementById("phonekey").value = "";
+      document.getElementById("payment").value = "Cash";
+      document.getElementById("total").value = 0;
+      tableData = [];
+      loadData();
     }
 
     function popupConfirm(message, callback) {

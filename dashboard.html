@@ -141,7 +141,8 @@
         <div></div>
         <div></div>
         <div></div>
-        <input type="button" class="button" id="logout" value="Logout" style="height: 50px; bottom: 20px; position: absolute; opacity: 0;">
+        <input type="button" class="button" id="logout" value="Logout"
+            style="height: 50px; bottom: 20px; position: absolute; opacity: 0;">
     </div>
     <script src="userVerification.js"></script>
     <script>
@@ -159,13 +160,13 @@
             document.getElementById("navbutton").onclick = function () {
                 openNav();
             };
-            setTimeout(function(){
+            setTimeout(function () {
                 document.getElementById("logout").style.opacity = 0;
-            },400);
+            }, 400);
             document.getElementById("navbutton").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="50px" viewBox="0 -960 960 960" width="50px" fill="#e8eaed"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" /></svg>';
         }
 
-        document.getElementById("logout").addEventListener("click",function(){
+        document.getElementById("logout").addEventListener("click", function () {
             var xhr = new XMLHttpRequest();
 
             xhr.open('POST', 'logout.php', true);
