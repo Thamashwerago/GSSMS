@@ -20,6 +20,10 @@
             user-select: none;
         }
 
+        ::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+
         .topbar {
             display: flex;
             width: 100%;
@@ -79,6 +83,27 @@
             height: 85vh;
             width: 95%;
         }
+
+        .textbox {
+            display: none;
+            margin: auto;
+            height: 50px;
+            width: 250px;
+            color: white;
+            background: transparent;
+            backdrop-filter: blur(9px);
+            font-weight: bold;
+            font-size: 24px;
+            border: 2px solid white;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .textbox:focus {
+            transform: scale(1.1);
+            outline: none;
+            backdrop-filter: blur(100px);
+        }
     </style>
 </head>
 
@@ -89,14 +114,11 @@
                 <path
                     d="m480-320 56-56-64-64h168v-80H472l64-64-56-56-160 160 160 160Zm0 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
             </svg></a>
-        <select id="selection">
+        <select id="selection" onchange="changetype()">
             <option value="1">Frequently Brought Products</option>
-            <option value="name" selected>Product Name</option>
-            <option value="category">Category</option>
-            <option value="brand">Brand</option>
-            <option value="partNo">Part No</option>
-            <option value="meNo">M.E. No</option>
+            <option value="2">Monthly Services</option>
         </select>
+        <input class="textbox" type="month" id="day">
         <input type="button" class="button" value="Find" onclick="find()">
     </div>
     <div class="report">
@@ -372,10 +394,57 @@
             xhr.send();
         }
 
+        function changetype() {
+            var selection = document.getElementById("selection").value;
+            var dayelement = document.getElementById("day");
+            if (selection == 2 || selection == 3) {
+                dayelement.style.display = "block";
+            }else{
+                dayelement.style.display = "none";
+            }
+
+        }
+
+        function salesYear() {
+
+        }
+
+        function salesMonth() {
+            var days = Array(31).fill(0);
+            var month = document.getElementById("day").value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'report.php', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+            xhr.onload = function () {
+                if (this.status == 200) {
+                    var results = JSON.parse(this.responseText);
+                    results.forEach(result => {
+                        var day = result.date.split("-");
+                        days[parseInt(day[day.length-1])]+=1;
+                    });
+                    for (let index = 0; index < days.length; index++) {
+                        yValues.push(index+1)
+                    }
+                    xValues=days;
+                    drawBarChart("Monthly Services", "No of Services", "Date");
+                }
+            }
+            xhr.send("month="+month);
+
+        }
+
         function find() {
+            if(chart){
+                chart.destroy();
+                yValues = [];
+                xValues = [];
+            }
             var selection = document.getElementById("selection").value;
             if (selection == 1) {
                 apriori()
+            }else if(selection == 2){
+                salesMonth()
             }
         }
     </script>

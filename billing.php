@@ -56,7 +56,7 @@ if ($conn) {
     }
 
     if (isset($_POST["productid"])) {
-        $sql = "UPDATE products SET quantity=quantity-". validate($_POST["qty"])." WHERE productid=". validate($_POST["productid"]).";";
+        $sql = "UPDATE products SET quantity=quantity-". validate($_POST["qty"])." WHERE productid=". validate($_POST["productid"]);
         if (sqlsrv_query($conn, $sql)) {
             echo true;
         } else {
