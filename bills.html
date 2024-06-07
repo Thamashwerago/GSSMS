@@ -28,6 +28,26 @@
       -webkit-appearance: none;
     }
 
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+      backdrop-filter: blur(9px);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: white;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #cccccc;
+      cursor: pointer;
+    }
+
     .topbar {
       display: flex;
       width: 100%;
@@ -122,6 +142,7 @@
 
     table {
       width: 100%;
+      animation: fadein 0.5s linear normal;
     }
 
     th,
@@ -146,6 +167,18 @@
       font-size: 24px;
       color: white;
       font-weight: bold;
+      animation: fadein 0.5s linear normal;
+    }
+
+    @keyframes fadein {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+
     }
   </style>
 </head>
@@ -173,7 +206,7 @@
     <input class="button" value="Delete">
     <input class="button" value="Info">
   </div>
-  <div class="table" id="table">
+  <div class="table" id="table" style="overflow: auto;">
     <table>
       <tr>
         <th>Bill No</th>

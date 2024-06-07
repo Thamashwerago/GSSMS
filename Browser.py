@@ -11,7 +11,7 @@ class Window(QMainWindow):
         self.setWindowTitle("Gimasha Service Center")
         self.setWindowIcon(QIcon("bg.jpg"))
         self.setGeometry(0,0,1600,900)
-        self.showMaximized()
+        #self.showMaximized()
 
         self.webEngineView = QWebEngineView()
         self.setCentralWidget(self.webEngineView)

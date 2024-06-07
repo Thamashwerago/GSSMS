@@ -22,6 +22,11 @@ function search($conn, $sql)
 }
 
 if ($conn) {
+    if (isset($_POST["load"])) {
+        $sql = "SELECT TOP 100 * FROM customers";
+        search($conn, $sql);
+    }
+
     if (isset($_POST["phoneNo"])) {
         $sql = "INSERT INTO customers(phoneno,name) VALUES('" . validate($_POST["phoneNo"]) . "','" . validate($_POST["name"]) . "')";
         if (sqlsrv_query($conn, $sql)) {
@@ -39,6 +44,29 @@ if ($conn) {
     if (isset($_POST["customerid"])) {
         $sql = "SELECT IDENT_CURRENT('customers') as customerid;";
         search($conn, $sql);
+    }
+
+    if (isset($_POST["filter"])) {
+        $sql = "SELECT TOP 100 * FROM customers WHERE " . validate($_POST["selectedItem"]) . " LIKE '%" . validate($_POST["searchKey"]) . "%'";
+        search($conn, $sql);
+    }
+
+    if (isset($_POST["edit"])) {
+        $sql = "UPDATE customers SET name='".validate($_POST["name"])."',phoneno='". validate($_POST["no"]) ."' WHERE customerid='" . validate($_POST["id"]) . "'";
+        if (sqlsrv_query($conn, $sql)) {
+            echo true;
+        } else {
+            echo false;
+        }
+    }
+
+    if (isset($_POST["delete"])) {
+        $sql = "DELETE FROM customers WHERE customerid=" . validate($_POST["id"]);
+        if (sqlsrv_query($conn, $sql)) {
+            echo true;
+        } else {
+            echo false;
+        }
     }
 
     sqlsrv_close($conn);

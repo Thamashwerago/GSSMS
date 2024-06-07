@@ -79,6 +79,11 @@ if ($conn) {
         }
     }
 
+    if (isset($_POST["low"])) {
+        $sql = "SELECT * FROM products WHERE quantity<10";
+        search($conn, $sql);
+    }
+
 
     sqlsrv_close($conn);
 }

@@ -177,6 +177,7 @@
 
     table {
       width: 100%;
+      animation: fadein 0.5s linear normal;
     }
 
     th,
@@ -267,6 +268,17 @@
 
     .suggestiontext:hover {
       transform: scale(1.1);
+    }
+
+    @keyframes fadein {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+
     }
   </style>
 </head>

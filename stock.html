@@ -20,6 +20,26 @@
       user-select: none;
     }
 
+    ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+            backdrop-filter: blur(9px);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: white;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #cccccc;
+            cursor: pointer;
+        }
+
     .topbar {
       display: flex;
       width: 100%;
@@ -114,6 +134,7 @@
 
     table {
       width: 100%;
+      animation: fadein 0.5s linear normal;
     }
 
     th,
@@ -138,6 +159,7 @@
       font-size: 24px;
       color: white;
       font-weight: bold;
+      animation: fadein 0.5s linear normal;
     }
 
     .popup {
@@ -165,6 +187,17 @@
       font-size: 24px;
       font-weight: bold;
     }
+
+    @keyframes fadein {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+
+    }
   </style>
 </head>
 
@@ -191,7 +224,7 @@
     <input type="button" class="button" value="Delete" onclick="deletRecords()">
     <input type="button" class="button" value="Edit" onclick="edit()">
   </div>
-  <div class="table" id="table">
+  <div class="table" id="table" style="overflow: auto;">
     <table>
       <tr>
         <th>Product ID</th>

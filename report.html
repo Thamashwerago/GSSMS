@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url(bg.jpg);
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            user-select: none;
+        }
+
+        .topbar {
+            display: flex;
+            width: 100%;
+            flex-direction: row;
+            margin: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button {
+            text-align: center;
+            margin: auto;
+            height: 50px;
+            width: 150px;
+            color: white;
+            background: transparent;
+            backdrop-filter: blur(9px);
+            font-weight: bold;
+            font-size: 24px;
+            border-radius: 10px;
+            border: 2px solid white;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+        }
+
+        select {
+            outline: none;
+            min-height: 50px;
+            min-width: 250px;
+            color: white;
+            background: transparent;
+            backdrop-filter: blur(9px);
+            font-weight: bold;
+            font-size: 24px;
+            border-radius: 10px;
+            border: 2px solid white;
+            transition: transform 0.3s ease;
+        }
+
+        option {
+            color: black;
+        }
+
+        .report {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px;
+            border-radius: 10px;
+            border: 2px solid white;
+            background: transparent;
+            backdrop-filter: blur(9px);
+            height: 85vh;
+            width: 95%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="topbar">
+        <a href="dashboard.html">
+            <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#e8eaed">
+                <path
+                    d="m480-320 56-56-64-64h168v-80H472l64-64-56-56-160 160 160 160Zm0 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+            </svg></a>
+        <select id="selection">
+            <option value="1">Frequently Brought Products</option>
+            <option value="name" selected>Product Name</option>
+            <option value="category">Category</option>
+            <option value="brand">Brand</option>
+            <option value="partNo">Part No</option>
+            <option value="meNo">M.E. No</option>
+        </select>
+        <input type="button" class="button" value="Find" onclick="find()">
+    </div>
+    <div class="report">
+        <canvas id="report" style="max-height: 100%; width: 100%;"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var chart;
+        var xValues = [];
+        var yValues = [];
+        var bgColor = [
+            'rgba(255, 99, 132, 0.5)',
+            'rgba(255, 159, 64, 0.5)',
+            'rgba(255, 205, 86, 0.5)',
+            'rgba(75, 192, 192, 0.5)',
+            'rgba(54, 162, 235, 0.5)',
+            'rgba(153, 102, 255, 0.5)',
+            'rgba(201, 203, 207, 0.5)'
+        ];
+        var borderColor = [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(54, 162, 235)',
+            'rgb(153, 102, 255)',
+            'rgb(201, 203, 207)'
+        ];
+
+        function drawBarChart(chartTitle, yTitle, xTitle) {
+            chart = new Chart("report", {
+                type: 'bar',
+                data: {
+                    labels: yValues,
+                    datasets: [{
+                        data: xValues,
+                        backgroundColor: bgColor,
+                        borderColor: borderColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: chartTitle,
+                            color: 'white',
+                            font: {
+                                size: 15,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255,255,255,0.4)'
+                            },
+                            beginAtZero: true,
+                            ticks: {
+                                color: "white",
+                                font: {
+                                    size: 22,
+                                    weight: 'bold',
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: yTitle,
+                                color: 'white',
+                                font: {
+                                    size: 15,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255,255,255,0.4)'
+                            },
+                            ticks: {
+                                color: "white",
+                                font: {
+                                    size: 22,
+                                    weight: 'bold',
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: xTitle,
+                                color: 'white',
+                                font: {
+                                    size: 15,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function drawPieChart(chartTitle) {
+            chart = new Chart("report", {
+                type: 'pie',
+                data: {
+                    labels: yValues,
+                    datasets: [{
+                        data: xValues,
+                        backgroundColor: bgColor,
+                        borderColor: borderColor,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: 'white',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: chartTitle,
+                            color: 'white',
+                            font: {
+                                size: 15,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function drawLineChart(chartTitle, yTitle, xTitle) {
+            chart = new Chart("report", {
+                type: 'line',
+                data: {
+                    labels: yValues,
+                    datasets: [{
+                        data: xValues,
+                        backgroundColor: bgColor,
+                        borderColor: borderColor,
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: chartTitle,
+                            color: 'white',
+                            font: {
+                                size: 15,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255,255,255,0.4)'
+                            },
+                            beginAtZero: true,
+                            ticks: {
+                                color: "white",
+                                font: {
+                                    size: 22,
+                                    weight: 'bold',
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: yTitle,
+                                color: 'white',
+                                font: {
+                                    size: 15,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255,255,255,0.4)'
+                            },
+                            ticks: {
+                                color: "white",
+                                font: {
+                                    size: 22,
+                                    weight: 'bold',
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: xTitle,
+                                color: 'white',
+                                font: {
+                                    size: 15,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function showData(records) {
+            var tabledata;
+            if (records.length > 0) {
+                tabledata = "<table><tr><th><input type='checkbox' id='selectall' class='checkbox' onclick='check()'></th><th>Bill No</th><th>Vehicle No</th><th>Vehicle Type</th><th>Date</th><th>Phone No</th><th>Present Meter</th><th>Next Meter</th><th>Payment Type</th><th>Total Amount</th></tr>";
+                records.forEach(record => {
+                    tabledata += "<tr><td><input type='checkbox' class='checkbox' id='select' value='" + record.billid + "'></td><td>" + record.billid + "</td><td>" + record.vehicleno + "</td><td>" + record.vehicletype + "</td><td>" + record.date + "</td><td>" + record.phoneno + "</td><td>" + record.presentmeter + "</td><td>" + record.nextmeter + "</td><td>" + record.paymentmethod + "</td><td>" + record.amount + "</td></tr>";
+                });
+                tabledata += "</table>"
+            } else {
+                tabledata = "<div class='massage'>No Records</div>";
+            }
+            document.getElementById("table").innerHTML = tabledata;
+        }
+
+        function search() {
+            var xhr = new XMLHttpRequest();
+            var selectedItem = document.getElementById("filter").value;
+            var searchKey = document.getElementById("search").value;
+
+            xhr.open('POST', 'bills.php', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+            xhr.onload = function () {
+                if (this.status == 200) {
+                    showData(JSON.parse(this.responseText));
+                }
+            }
+            xhr.send("filter&selectedItem=" + selectedItem + "&searchKey=" + searchKey);
+        }
+
+        function apriori() {
+            var ProductName = "";
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'apriori.php', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+            xhr.onload = function () {
+                if (this.status == 200) {
+                    var result = JSON.parse(this.responseText);
+                    result.frequentItemsets.forEach(element => {
+                        if (element.productName.length > 1) {
+                            ProductName = element.productName.join();
+                        } else {
+                            ProductName = element.productName[0];
+                        }
+                        yValues.push(ProductName);
+                        xValues.push(element.frequency);
+                        ProductName = "";
+                    });
+                    drawBarChart("Frequently Brought Products", "Frequency", "Product Name");
+                }
+            }
+            xhr.send();
+        }
+
+        function find() {
+            var selection = document.getElementById("selection").value;
+            if (selection == 1) {
+                apriori()
+            }
+        }
+    </script>
+</body>
+
+</html>
